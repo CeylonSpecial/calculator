@@ -18,9 +18,9 @@
 #buttons {
     display: grid;
     grid-template-areas:
-        'top1 top2 top3 plus'
-        'middle1 middle2 middle3 minus' 
-        'bottom1 bottom2 bottom3 mult'
+        'one two three plus'
+        'four five six minus' 
+        'seven eight nine mult'
         'clear clear equals div';
     width: 300px;
     height: 300px;
@@ -31,37 +31,37 @@
     padding: 2px;
 }
 #button1 {
-    grid-area: top1;
+    grid-area: one;
 }
 #button2 {
-    grid-area: top2;
+    grid-area: two;
 }
 #button3 {
-    grid-area: top3;
+    grid-area: three;
 }
 #+button {
     grid-area: plus;
 }
 #button4 {
-    grid-area: middle1;
+    grid-area: four;
 }
 #button5 {
-    grid-area: middle2;
+    grid-area: five;
 }
 #button6 {
-    grid-area: middle3;
+    grid-area: six;
 }
 #-button {
     grid-area: minus;
 }
 #button7 {
-    grid-area: bottom1;
+    grid-area: seven;
 }
 #button8 {
-    grid-area: bottom2;
+    grid-area: eight;
 }
 #button9 {
-    grid-area: bottom3;
+    grid-area: nine;
 }
 #xbutton {
     grid-area: mult;
