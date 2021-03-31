@@ -1,0 +1,74 @@
+#calculator-container {
+    margin: auto;
+    width: 350px;
+    height: 445px;
+    border: grey solid 3px;
+}
+#display {
+    margin: auto;
+    text-align: left;
+    padding-top: 25px;
+    width: 300px;
+    height: 50px;
+    border: grey solid 3px;
+    color: black;
+    font-size: 50px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#buttons {
+    display: grid;
+    grid-template-areas:
+        'top1 top2 top3 top4'
+        'middle1 middle2 middle3 middle4' 
+        'bottom1 bottom2 bottom3 bottom4'
+        'clear clear clear clear-right';
+    width: 300px;
+    height: 300px;
+    margin: auto;
+    row-gap: 5px;
+    column-gap: 5px;
+    border: grey solid 1px;
+    padding: 2px;
+}
+#button1 {
+    grid-area: top1;
+}
+#button2 {
+    grid-area: top2;
+}
+#button3 {
+    grid-area: top3;
+}
+#+button {
+    grid-area: top4;;
+}
+#button4 {
+    grid-area: middle1;
+}
+#button5 {
+    grid-area: middle2;
+}
+#button6 {
+    grid-area: middle3;
+}
+#-button {
+    grid-area: middle4;
+}
+#button7 {
+    grid-area: bottom1;
+}
+#button8 {
+    grid-area: bottom2;
+}
+#button9 {
+    grid-area: bottom3;
+}
+#xbutton {
+    grid-area: bottom4;
+}
+#clear-button {
+    grid-area: clear;
+}
+#/button {
+    grid-area: right-clear;
+}
