@@ -18,10 +18,10 @@
 #buttons {
     display: grid;
     grid-template-areas:
-        'top1 top2 top3 top4'
-        'middle1 middle2 middle3 middle4' 
-        'bottom1 bottom2 bottom3 bottom4'
-        'clear clear clear clear-right';
+        'top1 top2 top3 plus'
+        'middle1 middle2 middle3 minus' 
+        'bottom1 bottom2 bottom3 mult'
+        'clear clear equals div';
     width: 300px;
     height: 300px;
     margin: auto;
@@ -40,7 +40,7 @@
     grid-area: top3;
 }
 #+button {
-    grid-area: top4;;
+    grid-area: plus;
 }
 #button4 {
     grid-area: middle1;
@@ -52,7 +52,7 @@
     grid-area: middle3;
 }
 #-button {
-    grid-area: middle4;
+    grid-area: minus;
 }
 #button7 {
     grid-area: bottom1;
@@ -64,11 +64,14 @@
     grid-area: bottom3;
 }
 #xbutton {
-    grid-area: bottom4;
+    grid-area: mult;
 }
 #clear-button {
     grid-area: clear;
 }
+#=button {
+    grid-area: equals;
+}
 #/button {
-    grid-area: right-clear;
+    grid-area: div;
 }
