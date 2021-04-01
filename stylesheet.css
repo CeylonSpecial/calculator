@@ -1,33 +1,36 @@
 #calculator-container {
     margin: auto;
-    width: 350px;
+    width: 400px;
     height: 445px;
     border: grey solid 3px;
+    background: grey;
 }
 #display {
     margin: auto;
     text-align: left;
     padding-top: 25px;
-    width: 300px;
+    width: 350px;
     height: 50px;
     border: grey solid 3px;
     color: black;
     font-size: 50px;
     font-family: 'Rationale', sans-serif;
+    background: white;
 }
 #buttons {
     display: grid;
     grid-template-areas:
-        'one two three plus'
-        'four five six minus' 
-        'seven eight nine mult'
-        'clear clear equals div';
-    width: 300px;
+        'plus minus mult div'
+        'seven eight nine clear'
+        'four five six clear'
+        'one two three clear' 
+        'zero equals equals equals';
+    width: 350px;
     height: 300px;
     margin: auto;
     row-gap: 5px;
     column-gap: 5px;
-    border: grey solid 1px;
+    border: black solid 1px;
     padding: 2px;
 }
 #button1 {
@@ -39,7 +42,7 @@
 #button3 {
     grid-area: three;
 }
-#+button {
+#button+ {
     grid-area: plus;
 }
 #button4 {
@@ -51,7 +54,7 @@
 #button6 {
     grid-area: six;
 }
-#-button {
+#button- {
     grid-area: minus;
 }
 #button7 {
@@ -63,15 +66,18 @@
 #button9 {
     grid-area: nine;
 }
-#xbutton {
+#buttonx {
     grid-area: mult;
 }
-#clear-button {
+#button0 {
+    grid-area: zero;
+}
+#button-clear {
     grid-area: clear;
 }
-#=button {
+#button-equals {
     grid-area: equals;
 }
-#/button {
+#button-divide {
     grid-area: div;
 }
