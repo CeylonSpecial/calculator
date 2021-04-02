@@ -34,18 +34,12 @@ function divide(...nums) {
 
 function operate(num1, num2, operator) {
 
-    const operators = ['+','-','*','x','/'];
-
-    while (!operators.includes(operator)) {
-        operator = prompt('Sorry, that\'s not a valid operator. Please choose +, -, *, /');
-    }
     switch (operator) {
         case '+':
             return add(num1, num2);
         case '-':
             return subtract(num1, num2);
         case 'x':
-        case '*':
             return multiply(num1, num2);
         case '/':
             return divide(num1, num2);
@@ -70,6 +64,14 @@ var selected = {
         this.num2 += selection;
         this.progress = 3;
     },
+    roundSolution() {
+        let places = 16;
+        while (this.solution.length > 16) {
+            this.solution = this.solution.toFixed(places);
+            places--;
+        }
+        return this.solution;
+    },
     clearSelections() {
         this.num1 = '';
         this.num2 = '';
@@ -77,8 +79,8 @@ var selected = {
         this.progress = 0;
     },
     convertSelections() {
-        this.num1 = parseInt(this.num1);
-        this.num2 = parseInt(this.num2);
+        this.num1 = parseFloat(this.num1);
+        this.num2 = parseFloat(this.num2);
     },
     clearSolution() {
         this.solution = '';
@@ -134,7 +136,6 @@ function toggleClearButton() {
 
     if (display.textContent === '' || display.textContent === selected.solution.toString()) {
         clearButton.textContent = 'AC';
-
     }
     else {
         clearButton.textContent = 'CE';
@@ -142,10 +143,10 @@ function toggleClearButton() {
     return;
 }
 
-function checkSelection(newSelection) {
+function parseSelection(newSelection) {
     
-    const operators = ['+','-','*','x','/'];
-    const numbers = ['0','1','2','3','4','5','6','7','8','9'];
+    const operators = ['+','-','x','/'];
+    const numbers = ['.','0','1','2','3','4','5','6','7','8','9'];
     
     if (newSelection === 'AC') {
         clearDisplay();
@@ -162,12 +163,18 @@ function checkSelection(newSelection) {
     }
     else if (selected.solution === '') {
         if (numbers.includes(newSelection) && selected.operator === '') {
+            if (newSelection === '.' && selected.num1.search(/\./) >= 0) {
+                return;
+            }
             selected.num1Cat(newSelection);
         }
         else if (operators.includes(newSelection) && selected.num1 !== '' && selected.operator === '') {
             selected.changeOperator(newSelection);
         }
         else if (numbers.includes(newSelection)) {
+            if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
+                return;
+            }
             selected.num2Cat(newSelection);
         }
         else if ((newSelection === '=' || operators.includes(newSelection)) && selected.num1 !== '' && selected.num2 !== '') {
@@ -180,7 +187,7 @@ function checkSelection(newSelection) {
             }
             else {
                 clearDisplay();
-                populateDisplay(selected.solution);
+                populateDisplay(selected.roundSolution());
                 toggleClearButton();
             }
             return;
@@ -199,6 +206,9 @@ function checkSelection(newSelection) {
             selected.changeOperator(newSelection);
         }
         else if (numbers.includes(newSelection)) {
+            if (newSelection === '.' && selected.num1.search(/\./) >= 0) {
+                return;
+            }
             selected.num1Cat(newSelection);
         }
         else if ((newSelection === '=' || operators.includes(newSelection)) && selected.num1 !== '' && selected.operator !== '') {
@@ -211,7 +221,7 @@ function checkSelection(newSelection) {
             }
             else {
                 clearDisplay();
-                populateDisplay(selected.solution);
+                populateDisplay(selected.roundSolution());
                 toggleClearButton();
             }
             return;
@@ -228,5 +238,5 @@ function checkSelection(newSelection) {
 const buttons = document.querySelectorAll('button');
 
 buttons.forEach(button => button.addEventListener('click', () => {
-    checkSelection(button.textContent);
+    parseSelection(button.textContent);
 }))
