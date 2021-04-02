@@ -51,32 +51,19 @@ var selected = {
     num2: '',
     operator: '',
     solution: '',
-    progress: 0,
     num1Cat(selection) {
         this.num1 += selection;
-        this.progress = 1;
     },
     changeOperator(selection) {
         this.operator = selection;
-        this.progress = 2;
     },
     num2Cat(selection) {
         this.num2 += selection;
-        this.progress = 3;
-    },
-    roundSolution() {
-        let places = 16;
-        while (this.solution.length > 16) {
-            this.solution = this.solution.toFixed(places);
-            places--;
-        }
-        return this.solution;
     },
     clearSelections() {
         this.num1 = '';
         this.num2 = '';
         this.operator = '';
-        this.progress = 0;
     },
     convertSelections() {
         this.num1 = parseFloat(this.num1);
@@ -86,22 +73,18 @@ var selected = {
         this.solution = '';
     },
     clearEntry() {
-        if (this.progress === 1) {
-            this.num1 = this.num1.substring(0, this.num1.length - 1);
-            if (this.num1.length === 0) {
-                this.progress = 0;
-            }
-        }
-        else if (this.progress === 2) {
-            this.operator = ''
-            this.progress = 1;
-            }
-        else if (this.progress === 3) {
+        if (this.num2 != '') {
             this.num2 = this.num2.substring(0, this.num2.length - 1);
-            if (this.num2.length === 0) {
-                this.progress = 2;
-            }
         }
+        else if (this.operator != '') {
+            this.operator = '';
+        }  
+        else if (this.num1 != '') {
+            this.num1 = this.num1.substring(0, this.num1.length - 1);
+        }
+    },
+    isReady() {
+        return this.num1 !== '' && this.num2 !== '' && this.operator !== '';
     },
 }
 
@@ -143,94 +126,103 @@ function toggleClearButton() {
     return;
 }
 
-function parseSelection(newSelection) {
-    
-    const operators = ['+','-','x','/'];
-    const numbers = ['.','0','1','2','3','4','5','6','7','8','9'];
+function parseClearButton(newSelection) {
     
     if (newSelection === 'AC') {
         clearDisplay();
         selected.clearSelections();
         selected.clearSolution();
-        toggleClearButton();
-        return;
     }
-    else if (newSelection === 'CE') {
+    else {
         selected.clearEntry();
         clearLastEntry();
-        toggleClearButton();
-        return;
     }
-    else if (selected.solution === '') {
-        if (numbers.includes(newSelection) && selected.operator === '') {
+    toggleClearButton();
+    return;
+}
+
+function storeNumber(newSelection) {
+
+    if (selected.solution === '') {
+        if (selected.operator === '') {
             if (newSelection === '.' && selected.num1.search(/\./) >= 0) {
                 return;
             }
             selected.num1Cat(newSelection);
         }
-        else if (operators.includes(newSelection) && selected.num1 !== '' && selected.operator === '') {
-            selected.changeOperator(newSelection);
-        }
-        else if (numbers.includes(newSelection)) {
+        else {
             if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
                 return;
             }
             selected.num2Cat(newSelection);
         }
-        else if ((newSelection === '=' || operators.includes(newSelection)) && selected.num1 !== '' && selected.num2 !== '') {
-            selected.convertSelections();
-            selected.solution = operate(selected.num1, selected.num2, selected.operator);
-            selected.clearSelections();
-            if (operators.includes(newSelection)) {
-                selected.changeOperator(newSelection);
-                populateDisplay(newSelection);
-            }
-            else {
-                clearDisplay();
-                populateDisplay(selected.roundSolution());
-                toggleClearButton();
-            }
-            return;
-        }
-        else {
-            return;
-        }
     }
     else {
-        if (numbers.includes(newSelection) && selected.operator === '') {
+        if (selected.operator === '') {
             clearDisplay();
+            selected.clearSelections();
             selected.clearSolution();
             selected.num1Cat(newSelection);
         }
-        else if (operators.includes(newSelection) && selected.operator === '') {
-            selected.changeOperator(newSelection);
-        }
-        else if (numbers.includes(newSelection)) {
-            if (newSelection === '.' && selected.num1.search(/\./) >= 0) {
+        else {
+            if (selected.num2.search(/\./) >= 0) {
                 return;
             }
-            selected.num1Cat(newSelection);
-        }
-        else if ((newSelection === '=' || operators.includes(newSelection)) && selected.num1 !== '' && selected.operator !== '') {
-            selected.convertSelections();
-            selected.solution = operate(selected.solution, selected.num1, selected.operator);
-            selected.clearSelections();
-            if (operators.includes(newSelection)) {
-                selected.changeOperator(newSelection);
-                populateDisplay(newSelection);
-            }
-            else {
-                clearDisplay();
-                populateDisplay(selected.roundSolution());
-                toggleClearButton();
-            }
-            return;
-        }
-        else {
-            return;
+            selected.num2Cat(newSelection);
         }
     }
     populateDisplay(newSelection);
+    return;
+}
+
+function storeOperator(newSelection) {
+    if (selected.num1 !== '' && selected.operator === '') {
+        selected.changeOperator(newSelection);
+    }
+    else if (selected.isReady()) {
+        selected.convertSelections();
+        selected.solution = operate(selected.num1, selected.num2, selected.operator);
+        selected.clearSelections();
+        selected.num1Cat(selected.solution);
+        selected.changeOperator(newSelection);
+    }
+    else {
+        return;
+    }
+    populateDisplay(newSelection);
+    return;
+}
+
+function parseEquals() {
+    if (selected.isReady()) {
+        selected.convertSelections();
+        selected.solution = operate(selected.num1, selected.num2, selected.operator);
+        selected.clearSelections();
+        selected.num1Cat(selected.solution);
+        clearDisplay();
+        populateDisplay(selected.solution);
+    }
+    return;
+}
+
+function parseSelection(newSelection) {
+    
+    const operators = ['+','-','x','/'];
+    const numbers = ['.','0','1','2','3','4','5','6','7','8','9'];
+    const clearButtons = ['AC','CE'];
+    
+    if (clearButtons.includes(newSelection)) {
+        parseClearButton(newSelection);
+    }
+    else if (numbers.includes(newSelection)) {
+        storeNumber(newSelection);
+    }
+    else if (operators.includes(newSelection)) {
+        storeOperator(newSelection);
+    }
+    else if (newSelection === '=') {
+        parseEquals(newSelection);
+    }
     toggleClearButton();
     return;
 }
