@@ -46,6 +46,199 @@ function operate(num1, num2, operator) {
     }
 }
 
+function populateDisplay(newSelection) {
+
+    const display = document.querySelector('#display');
+
+    display.textContent += newSelection;
+    return;
+}
+
+function clearDisplay() {
+    const display = document.querySelector('#display');
+
+    display.textContent = '';
+    toggleClearButton();
+    return;
+}
+
+function clearLastEntry() {
+    const display = document.querySelector('#display');
+
+    if (display.textContent !== '') {
+        display.textContent = display.textContent.substring(0, display.textContent.length - 1);
+        return;
+    }
+    toggleClearButton();
+    return;    
+}
+
+function toggleClearButton() {
+    const clearButton = document.querySelector('#button-clear');
+    const display = document.querySelector('#display');
+
+    if (display.textContent === '' || (display.textContent === selected.solution.toString() && !selected.getLastOp())) {
+        clearButton.textContent = 'AC';
+    }
+    else {
+        clearButton.textContent = 'CE';
+    }
+    return;
+}
+
+function changeButtonColor(selection) {
+
+    let button = '';
+    
+    switch (selection) {
+        case '+':
+            button = document.querySelector('#button-plus');
+            break;
+        case '-':
+            button = document.querySelector('#button-minus');
+            break;
+        case 'x':
+            button = document.querySelector('#button-multiply');
+            break;
+        case '/':
+            button = document.querySelector('#button-divide');
+            break;
+    }
+    button.style.filter = 'brightness(120%)';
+    return;
+}
+
+function resetButtonColor() {
+
+    let button = '';
+    
+    switch (selected.operator) {
+        case '+':
+            button = document.querySelector('#button-plus');
+            break;
+        case '-':
+            button = document.querySelector('#button-minus');
+            break;
+        case 'x':
+            button = document.querySelector('#button-multiply');
+            break;
+        case '/':
+            button = document.querySelector('#button-divide');
+            break;
+    }
+    button.style.filter = 'brightness(100%)';
+}
+
+function parseClearButton(newSelection) {
+    
+    if (newSelection === 'AC') {
+        clearDisplay();
+        resetButtonColor();
+        selected.clearSelections();
+        selected.clearSolution();
+    }
+    else {
+        if (selected.getLastOp()) {
+            resetButtonColor();
+        }
+        else {
+            clearLastEntry();
+        }
+        selected.clearEntry();
+    }
+    toggleClearButton();
+    return;
+}
+
+function storeNumber(newSelection) {
+
+    if (selected.solution === '') {
+        if (selected.operator === '') {
+            if (newSelection === '.' && selected.num1.search(/\./) >= 0) {
+                return;
+            }
+            selected.num1Cat(newSelection);
+        }
+        else {
+            if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
+                return;
+            }
+            selected.num2Cat(newSelection);
+        }
+    }
+    else {
+        if (selected.operator === '') {
+            clearDisplay();
+            selected.clearSelections();
+            selected.clearSolution();
+            selected.num1Cat(newSelection);
+        }
+        else {
+            if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
+                return;
+            }
+            selected.num2Cat(newSelection);
+        }
+    }
+    clearDisplay();
+    populateDisplay(newSelection);
+    return;
+}
+
+function storeOperator(newSelection) {
+    if (selected.num1 !== '' && selected.operator === '') {
+        selected.changeOperator(newSelection);
+        changeButtonColor(newSelection);
+    }
+    else if (selected.isReady()) {
+        selected.convertSelections();
+        selected.solution = operate(selected.num1, selected.num2, selected.operator);
+        resetButtonColor();
+        selected.clearSelections();
+        selected.num1Cat(selected.solution);
+        selected.changeOperator(newSelection);
+        clearDisplay();
+        populateDisplay(selected.solution);
+        changeButtonColor(newSelection);
+    }
+    return;
+}
+
+function parseEquals() {
+    if (selected.isReady()) {
+        selected.convertSelections();
+        selected.solution = operate(selected.num1, selected.num2, selected.operator);
+        resetButtonColor();
+        selected.clearSelections();
+        selected.num1Cat(selected.solution);
+        clearDisplay();
+        populateDisplay(selected.roundSolution());
+    }
+    return;
+}
+
+function parseSelection(newSelection) {
+    
+    const operators = ['+','-','x','/'];
+    const numbers = ['.','0','1','2','3','4','5','6','7','8','9'];
+    const clearButtons = ['AC','CE'];
+    
+    if (clearButtons.includes(newSelection)) {
+        parseClearButton(newSelection);
+    }
+    else if (numbers.includes(newSelection)) {
+        storeNumber(newSelection);
+    }
+    else if (operators.includes(newSelection)) {
+        storeOperator(newSelection);
+    }
+    else if (newSelection === '=') {
+        parseEquals(newSelection);
+    }
+    toggleClearButton();
+    return;
+}
+
 var selected = {
     num1: '',
     num2: '',
@@ -106,190 +299,18 @@ var selected = {
             }
         }
         return this.solution;
-    }
-}
-
-function populateDisplay(newSelection) {
-
-    const display = document.querySelector('#display');
-
-    display.textContent += newSelection;
-    return;
-}
-
-function clearDisplay() {
-    const display = document.querySelector('#display');
-
-    display.textContent = '';
-    return;
-}
-
-function clearLastEntry() {
-    const display = document.querySelector('#display');
-
-    if (display.textContent !== '') {
-        display.textContent = display.textContent.substring(0, display.textContent.length - 1);
-        return;
-    }
-    return;    
-}
-
-function toggleClearButton() {
-    const clearButton = document.querySelector('#button-clear');
-    const display = document.querySelector('#display');
-
-    if (display.textContent === '' || display.textContent === selected.solution.toString()) {
-        clearButton.textContent = 'AC';
-    }
-    else {
-        clearButton.textContent = 'CE';
-    }
-    return;
-}
-
-function changeButtonColor(selection) {
-
-    let button = '';
-    
-    switch (selection) {
-        case '+':
-            button = document.querySelector('#button-plus');
-            break;
-        case '-':
-            button = document.querySelector('#button-minus');
-            break;
-        case 'x':
-            button = document.querySelector('#button-multiply');
-            break;
-        case '/':
-            button = document.querySelector('#button-divide');
-            break;
-    }
-    button.style.filter = 'brightness(120%)';
-    return;
-}
-
-function resetButtonColor() {
-
-    let button = '';
-    
-    switch (selected.operator) {
-        case '+':
-            button = document.querySelector('#button-plus');
-            break;
-        case '-':
-            button = document.querySelector('#button-minus');
-            break;
-        case 'x':
-            button = document.querySelector('#button-multiply');
-            break;
-        case '/':
-            button = document.querySelector('#button-divide');
-            break;
-    }
-    button.style.filter = 'brightness(100%)';
-}
-
-function parseClearButton(newSelection) {
-    
-    if (newSelection === 'AC') {
-        clearDisplay();
-        selected.clearSelections();
-        selected.clearSolution();
-    }
-    else {
-        selected.clearEntry();
-        clearLastEntry();
-    }
-    toggleClearButton();
-    return;
-}
-
-function storeNumber(newSelection) {
-
-    if (selected.solution === '') {
-        if (selected.operator === '') {
-            if (newSelection === '.' && selected.num1.search(/\./) >= 0) {
-                return;
-            }
-            selected.num1Cat(newSelection);
+    },
+    getLastOp() {
+        if (this.num2 != '') {
+            return;
         }
-        else {
-            if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
-                return;
-            }
-            selected.num2Cat(newSelection);
+        else if (this.operator != '') {
+            return this.operator;
+        }  
+        else if (this.num1 != '') {
+            return;
         }
     }
-    else {
-        if (selected.operator === '') {
-            clearDisplay();
-            selected.clearSelections();
-            selected.clearSolution();
-            selected.num1Cat(newSelection);
-        }
-        else {
-            if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
-                return;
-            }
-            selected.num2Cat(newSelection);
-        }
-    }
-    populateDisplay(newSelection);
-    return;
-}
-
-function storeOperator(newSelection) {
-    if (selected.num1 !== '' && selected.operator === '') {
-        selected.changeOperator(newSelection);
-        changeButtonColor(newSelection);
-    }
-    else if (selected.isReady()) {
-        selected.convertSelections();
-        selected.solution = operate(selected.num1, selected.num2, selected.operator);
-        selected.clearSelections();
-        selected.num1Cat(selected.solution);
-        selected.changeOperator(newSelection);
-        clearDisplay();
-        populateDisplay(selected.solution);
-        changeButtonColor(newSelection);
-    }
-    return;
-}
-
-function parseEquals() {
-    if (selected.isReady()) {
-        selected.convertSelections();
-        selected.solution = operate(selected.num1, selected.num2, selected.operator);
-        resetButtonColor();
-        selected.clearSelections();
-        selected.num1Cat(selected.solution);
-        clearDisplay();
-        populateDisplay(selected.roundSolution());
-    }
-    return;
-}
-
-function parseSelection(newSelection) {
-    
-    const operators = ['+','-','x','/'];
-    const numbers = ['.','0','1','2','3','4','5','6','7','8','9'];
-    const clearButtons = ['AC','CE'];
-    
-    if (clearButtons.includes(newSelection)) {
-        parseClearButton(newSelection);
-    }
-    else if (numbers.includes(newSelection)) {
-        storeNumber(newSelection);
-    }
-    else if (operators.includes(newSelection)) {
-        storeOperator(newSelection);
-    }
-    else if (newSelection === '=') {
-        parseEquals(newSelection);
-    }
-    toggleClearButton();
-    return;
 }
 
 const buttons = document.querySelectorAll('button');
