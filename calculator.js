@@ -104,7 +104,7 @@ function changeButtonColor(selection) {
             button = document.querySelector('#button-divide');
             break;
     }
-    button.style.filter = 'brightness(120%)';
+    button.setAttribute('style', 'filter: brightness(120%)');
     return;
 }
 
@@ -126,7 +126,10 @@ function resetButtonColor() {
             button = document.querySelector('#button-divide');
             break;
     }
-    button.style.filter = 'brightness(100%)';
+    if (button !== '') {
+        button.removeAttribute('style', 'filter: brightness(120%)');
+    }
+    return;
 }
 
 function parseClearButton(newSelection) {
@@ -285,23 +288,8 @@ var selected = {
         return this.num1 !== '' && this.num2 !== '' && this.operator !== '';
     },
     roundSolution() {
-
-        let solutionArr = Array.from(String(this.solution));
-    
-        if (solutionArr.length > 16) {
-            if (solutionArr[16] >= 5) {
-    
-                let index = 15;
-    
-                while (solutionArr[index] > 9) {
-                    index--;
-                }
-                solutionArr[index] = parseFloat(solutionArr[index]) + 1;
-                this.solution = parseFloat(String(solutionArr.slice(0, (index + 1))).replace(/,/g, ''));
-            }
-            else {
-                this.solution = parseFloat(String(selected.solution).slice(0,16));
-            }
+        if (this.solution.toString().length > 14) {
+            this.solution = parseFloat(this.solution).toPrecision(13);
         }
         return this.solution;
     },
