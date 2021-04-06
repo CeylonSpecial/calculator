@@ -86,6 +86,27 @@ var selected = {
     isReady() {
         return this.num1 !== '' && this.num2 !== '' && this.operator !== '';
     },
+    roundSolution() {
+
+        let solutionArr = Array.from(String(this.solution));
+    
+        if (solutionArr.length > 16) {
+            if (solutionArr[16] >= 5) {
+    
+                let index = 15;
+    
+                while (solutionArr[index] > 9) {
+                    index--;
+                }
+                solutionArr[index] = parseFloat(solutionArr[index]) + 1;
+                this.solution = parseFloat(String(solutionArr.slice(0, (index + 1))).replace(/,/g, ''));
+            }
+            else {
+                this.solution = parseFloat(String(selected.solution).slice(0,16));
+            }
+        }
+        return this.solution;
+    }
 }
 
 function populateDisplay(newSelection) {
@@ -124,6 +145,49 @@ function toggleClearButton() {
         clearButton.textContent = 'CE';
     }
     return;
+}
+
+function changeButtonColor(selection) {
+
+    let button = '';
+    
+    switch (selection) {
+        case '+':
+            button = document.querySelector('#button-plus');
+            break;
+        case '-':
+            button = document.querySelector('#button-minus');
+            break;
+        case 'x':
+            button = document.querySelector('#button-multiply');
+            break;
+        case '/':
+            button = document.querySelector('#button-divide');
+            break;
+    }
+    button.style.filter = 'brightness(120%)';
+    return;
+}
+
+function resetButtonColor() {
+
+    let button = '';
+    
+    switch (selected.operator) {
+        case '+':
+            button = document.querySelector('#button-plus');
+            break;
+        case '-':
+            button = document.querySelector('#button-minus');
+            break;
+        case 'x':
+            button = document.querySelector('#button-multiply');
+            break;
+        case '/':
+            button = document.querySelector('#button-divide');
+            break;
+    }
+    button.style.filter = 'brightness(100%)';
 }
 
 function parseClearButton(newSelection) {
@@ -165,7 +229,7 @@ function storeNumber(newSelection) {
             selected.num1Cat(newSelection);
         }
         else {
-            if (selected.num2.search(/\./) >= 0) {
+            if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
                 return;
             }
             selected.num2Cat(newSelection);
@@ -178,6 +242,7 @@ function storeNumber(newSelection) {
 function storeOperator(newSelection) {
     if (selected.num1 !== '' && selected.operator === '') {
         selected.changeOperator(newSelection);
+        changeButtonColor(newSelection);
     }
     else if (selected.isReady()) {
         selected.convertSelections();
@@ -185,11 +250,10 @@ function storeOperator(newSelection) {
         selected.clearSelections();
         selected.num1Cat(selected.solution);
         selected.changeOperator(newSelection);
+        clearDisplay();
+        populateDisplay(selected.solution);
+        changeButtonColor(newSelection);
     }
-    else {
-        return;
-    }
-    populateDisplay(newSelection);
     return;
 }
 
@@ -197,10 +261,11 @@ function parseEquals() {
     if (selected.isReady()) {
         selected.convertSelections();
         selected.solution = operate(selected.num1, selected.num2, selected.operator);
+        resetButtonColor();
         selected.clearSelections();
         selected.num1Cat(selected.solution);
         clearDisplay();
-        populateDisplay(selected.solution);
+        populateDisplay(selected.roundSolution());
     }
     return;
 }

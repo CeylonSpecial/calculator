@@ -18,7 +18,7 @@ h1 {
     padding-bottom: 2px;
     width: 350px;
     height: 50px;
-    border: grey solid 3px;
+    border: black solid 3px;
     color: black;
     font-size: 50px;
     font-family: 'Rationale', sans-serif;
@@ -42,54 +42,125 @@ h1 {
     padding: 2px;
     border-radius: 5px;
 }
+.all-buttons:active {
+    filter: brightness(120%);
+}
 #button0 {
     grid-area: zero;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
 #button1 {
     grid-area: one;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
 #button2 {
     grid-area: two;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
 #button3 {
     grid-area: three;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
 #button4 {
     grid-area: four;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
 #button5 {
     grid-area: five;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
 #button6 {
     grid-area: six;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
 #button7 {
     grid-area: seven;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
 #button8 {
     grid-area: eight;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
 #button9 {
     grid-area: nine;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
-#button+ {
+#button-plus {
     grid-area: plus;
+    border: none;
+    border-radius: 2px;
+    background-color: lightseagreen;
+    font-size: 25px;
 }
-#button- {
+#button-minus {
     grid-area: minus;
+    border: none;
+    border-radius: 2px;
+    background-color: lightseagreen;
+    font-size: 25px;
 }
-#buttonx {
+#button-multiply {
     grid-area: mult;
+    border: none;
+    border-radius: 2px;
+    background-color: lightseagreen;
+    font-size: 25px;
 }
 #button-divide {
     grid-area: div;
+    border: none;
+    border-radius: 2px;
+    background-color: lightseagreen;
+    font-size: 25px;
 }
 #button-equals {
     grid-area: equals;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: lightsalmon;
 }
 #button-decimal {
     grid-area: decimal;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: linen;
 }
 #button-clear {
     grid-area: clear;
+    border: none;
+    border-radius: 2px;
+    font-size: 25px;
+    background-color: lightcoral;
 }
