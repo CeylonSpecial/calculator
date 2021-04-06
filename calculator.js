@@ -194,7 +194,16 @@ function storeNumber(newSelection) {
 }
 
 function storeOperator(newSelection) {
-    if (selected.num1 !== '' && selected.operator === '') {
+    if (newSelection === '-' && selected.num1 === '') {
+        selected.num1Cat(newSelection);
+        populateDisplay(newSelection);
+    }
+    else if (newSelection === '-' && selected.operator !== '' && selected.num2 === '') {
+        selected.num2Cat(newSelection);
+        clearDisplay();
+        populateDisplay(newSelection);
+    }
+    else if (selected.num1 !== '' && selected.operator === '') {
         selected.changeOperator(newSelection);
         changeButtonColor(newSelection);
     }
