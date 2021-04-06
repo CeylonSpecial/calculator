@@ -163,6 +163,9 @@ function storeNumber(newSelection) {
             if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
                 return;
             }
+            if (selected.num2 === '') {
+                clearDisplay();
+            }
             selected.num2Cat(newSelection);
         }
     }
@@ -177,10 +180,12 @@ function storeNumber(newSelection) {
             if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
                 return;
             }
+            if (selected.num2 === '') {
+                clearDisplay();
+            }
             selected.num2Cat(newSelection);
         }
     }
-    clearDisplay();
     populateDisplay(newSelection);
     return;
 }
@@ -198,7 +203,7 @@ function storeOperator(newSelection) {
         selected.num1Cat(selected.solution);
         selected.changeOperator(newSelection);
         clearDisplay();
-        populateDisplay(selected.solution);
+        populateDisplay(selected.roundSolution());
         changeButtonColor(newSelection);
     }
     return;
