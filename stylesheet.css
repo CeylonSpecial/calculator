@@ -45,6 +45,9 @@ h1 {
 .all-buttons:active {
     filter: brightness(120%);
 }
+.pressed {
+    filter: brightness(120%);
+}
 #button0 {
     grid-area: zero;
     border: none;

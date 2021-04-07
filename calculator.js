@@ -98,7 +98,9 @@ function changeButtonColor(selection) {
             button = document.querySelector('#button-divide');
             break;
     }
-    button.setAttribute('style', 'filter: brightness(120%)');
+    if (button) {
+        button.setAttribute('style', 'filter: brightness(120%)');
+    }
     return;
 }
 
@@ -197,7 +199,7 @@ function storeOperator(newSelection) {
         clearDisplay();
         populateDisplay(newSelection);
     }
-    else if (selected.num1 !== '' && selected.operator === '') {
+    else if (selected.num1 !== '' && selected.num1 !== '-' && selected.operator === '') {
         selected.changeOperator(newSelection);
         changeButtonColor(newSelection);
     }
@@ -234,8 +236,8 @@ function parseSelection(newSelection) {
     const numbers = ['.','0','1','2','3','4','5','6','7','8','9'];
     const clearButtons = ['AC','CE'];
     
-    if (clearButtons.includes(newSelection)) {
-        parseClearButton(newSelection);
+    if (clearButtons.includes(newSelection) || newSelection === 'Backspace') {
+        parseClearButton(whichClear());
     }
     else if (numbers.includes(newSelection)) {
         storeNumber(newSelection);
@@ -243,31 +245,8 @@ function parseSelection(newSelection) {
     else if (operators.includes(newSelection)) {
         storeOperator(newSelection);
     }
-    else if (newSelection === '=') {
+    else if (newSelection === '=' || newSelection === 'Enter') {
         parseEquals(newSelection);
-    }
-    toggleClearButton();
-    return;
-}
-
-function parseKeySelection(e) {
-
-    const operators = [61, 173, 88, 191];
-    const numbers = [190, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
-
-    if (numbers.includes(e.keyCode)) {
-        storeNumber(e.key);
-    }
-    else if (operators.includes(e.keyCode)) {
-        console.log(e.key);
-        storeOperator(e.key);
-    }
-    else if (e.keyCode === 8) {
-        console.log(whichClear());
-        parseClearButton(whichClear());
-    }
-    else if (e.keyCode === 13) {
-        parseEquals();
     }
     toggleClearButton();
     return;
@@ -321,7 +300,7 @@ var selected = {
         }
     },
     isReady() {
-        return this.num1 !== '' && this.num2 !== '' && this.operator !== '';
+        return this.num1 !== '' && this.num1 !== '-' && this.num2 !== '' && this.num2 !== '-' && this.operator !== '';
     },
     roundSolution() {
         if (this.solution.toString().length > 14) {
@@ -335,7 +314,7 @@ var selected = {
         }
         else if (this.operator != '') {
             return this.operator;
-        }  
+        }
         else if (this.num1 != '') {
             return;
         }
@@ -346,5 +325,15 @@ const buttons = document.querySelectorAll('button');
 
 buttons.forEach(button => button.addEventListener('click', () => {
     parseSelection(button.textContent);
-}))
-document.addEventListener('keydown', parseKeySelection);
+}));
+document.addEventListener('keydown', function(e){
+    const key = document.querySelector(`button[key="${e.key}"]`);
+    
+    if (key) {
+        key.classList.add('pressed');
+        document.addEventListener('keyup', function (){
+            key.classList.remove('pressed');
+        });
+    }
+    parseSelection(e.key);
+});
