@@ -75,14 +75,8 @@ function clearLastEntry() {
 
 function toggleClearButton() {
     const clearButton = document.querySelector('#button-clear');
-    const display = document.querySelector('#display');
 
-    if (display.textContent === '' || (display.textContent === selected.solution.toString() && !selected.getLastOp())) {
-        clearButton.textContent = 'AC';
-    }
-    else {
-        clearButton.textContent = 'CE';
-    }
+    clearButton.textContent = whichClear();
     return;
 }
 
@@ -256,6 +250,39 @@ function parseSelection(newSelection) {
     return;
 }
 
+function parseKeySelection(e) {
+
+    const operators = [61, 173, 88, 191];
+    const numbers = [190, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+
+    if (numbers.includes(e.keyCode)) {
+        storeNumber(e.key);
+    }
+    else if (operators.includes(e.keyCode)) {
+        console.log(e.key);
+        storeOperator(e.key);
+    }
+    else if (e.keyCode === 8) {
+        console.log(whichClear());
+        parseClearButton(whichClear());
+    }
+    else if (e.keyCode === 13) {
+        parseEquals();
+    }
+    toggleClearButton();
+    return;
+}
+
+function whichClear() {
+
+    if (selected.operator !== '') {
+        return 'CE'
+    }
+    else {
+        return 'AC';
+    }
+}
+
 var selected = {
     num1: '',
     num2: '',
@@ -320,3 +347,4 @@ const buttons = document.querySelectorAll('button');
 buttons.forEach(button => button.addEventListener('click', () => {
     parseSelection(button.textContent);
 }))
+document.addEventListener('keydown', parseKeySelection);
