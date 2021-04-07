@@ -298,7 +298,7 @@ var selected = {
     },
     roundSolution() {
         if (this.solution.toString().length > 14) {
-            this.solution = parseFloat(this.solution).toPrecision(13);
+            this.solution = parseFloat(this.solution).toPrecision(10);
         }
         return this.solution;
     },
