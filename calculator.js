@@ -1,39 +1,58 @@
-function add(...nums) {
-    
-    return nums.reduce((total, num) => {
-        return total + num;
-    });
+var calcMem = {
+    num1: '',
+    num2: '',
+    operator: '',
+    solution: '',
+    clearSelections() {
+        this.num1 = '';
+        this.num2 = '';
+        this.operator = '';
+    },
+    clearEntry() {
+        if (this.num2 !== '') {
+            this.num2 = this.num2.substring(0, this.num2.length - 1);
+        } else if (this.operator !== '') {
+            this.operator = '';
+        } else if (this.num1 !== '') {
+            this.num1 = this.num1.substring(0, this.num1.length - 1);
+        }
+    },
+    readyToOperate() {
+        return this.num1 !== '' && this.num1 !== '-' && this.num2 !== '' && this.num2 !== '-' && this.operator !== '';
+    },
+    roundSolution() {
+        if (this.solution.toString().length > 14) {
+            this.solution = parseFloat(this.solution).toPrecision(10);
+        }
+        return this.solution;
+    },
+    operatorWasLast() {
+        if (this.num2 === '') {
+            return this.operator !== '';
+        }
+    },
 }
 
-function subtract(...nums) {
-
-    return nums.reduce((total, num) => {
-        return total - num;
-    });
+function add(num1, num2) {
+    return parseFloat(num1) + parseFloat(num2);
 }
 
-function multiply(...nums) {
-
-    return nums.reduce((total, num) => {
-        return total * num;
-    });
+function subtract(num1, num2) {
+    return parseFloat(num1) - parseFloat(num2);
 }
 
-function divide(...nums) {
-    
-    for (let i = 1; i < nums.length; i++) {
-        if (nums[i] === 0) {
-            return "Lol, nice try.";
-        };
+function multiply(num1, num2) {
+    return parseFloat(num1) * parseFloat(num2);
+}
+
+function divide(num1, num2) {
+    if (parseFloat(num2) === 0) {
+        return "Lol, nice try.";
     }
-
-    return nums.reduce((total, num) => {
-        return total / num;
-    });
+    return parseFloat(num1) / parseFloat(num2);
 }
 
 function operate(num1, num2, operator) {
-
     switch (operator) {
         case '+':
             return add(num1, num2);
@@ -46,42 +65,13 @@ function operate(num1, num2, operator) {
     }
 }
 
-function populateDisplay(newSelection) {
-
-    const display = document.querySelector('#display');
-
-    display.textContent += newSelection;
-    return;
-}
-
-function clearDisplay() {
-    const display = document.querySelector('#display');
-
-    display.textContent = '';
-    toggleClearButton();
-    return;
-}
-
-function clearLastEntry() {
-    const display = document.querySelector('#display');
-
-    if (display.textContent !== '') {
-        display.textContent = display.textContent.substring(0, display.textContent.length - 1);
-        return;
-    }
-    toggleClearButton();
-    return;    
-}
-
 function toggleClearButton() {
     const clearButton = document.querySelector('#button-clear');
 
     clearButton.textContent = whichClear();
-    return;
 }
 
 function changeButtonColor(selection) {
-
     let button = '';
     
     switch (selection) {
@@ -98,17 +88,15 @@ function changeButtonColor(selection) {
             button = document.querySelector('#button-divide');
             break;
     }
-    if (button) {
+    if (button !== '') {
         button.setAttribute('style', 'filter: brightness(120%)');
     }
-    return;
 }
 
 function resetButtonColor() {
-
     let button = '';
     
-    switch (selected.operator) {
+    switch (calcMem.operator) {
         case '+':
             button = document.querySelector('#button-plus');
             break;
@@ -125,200 +113,140 @@ function resetButtonColor() {
     if (button !== '') {
         button.removeAttribute('style', 'filter: brightness(120%)');
     }
-    return;
+}
+
+function populateDisplay(newSelection) {
+    const display = document.querySelector('#display');
+    
+    display.textContent += newSelection;
+}
+
+function clearDisplay() {
+    const display = document.querySelector('#display');
+    
+    display.textContent = '';
+    toggleClearButton();
+}
+
+function clearLastEntry() {
+    const display = document.querySelector('#display');
+
+    if (display.textContent !== '') {
+        display.textContent = display.textContent.substring(0, display.textContent.length - 1);
+    }
+    toggleClearButton(); 
+}
+
+function whichClear() {
+    if (calcMem.operator !== '') {
+        return 'CE'
+    } else {
+        return 'AC';
+    }
+}
+
+function parseEquals() {
+    if (calcMem.readyToOperate()) {
+        calcMem.solution = operate(calcMem.num1, calcMem.num2, calcMem.operator);
+        resetButtonColor();
+        calcMem.clearSelections();
+        calcMem.num1 += calcMem.solution;
+        clearDisplay();
+        populateDisplay(calcMem.roundSolution());
+    }
+}
+
+function storeOperator(newSelection) {
+    if (newSelection === '-' && calcMem.num1 === '') {
+        calcMem.num1 += newSelection;
+        populateDisplay(newSelection);
+    } else if (newSelection === '-' && calcMem.operator !== '' && calcMem.num2 === '') {
+        calcMem.num2 += newSelection;
+        clearDisplay();
+        populateDisplay(newSelection);
+    } else if (calcMem.num1 !== '' && calcMem.num1 !== '-' && calcMem.operator === '') {
+        calcMem.operator = newSelection;
+        changeButtonColor(newSelection);
+    } else if (calcMem.readyToOperate()) {
+        calcMem.solution = operate(calcMem.num1, calcMem.num2, calcMem.operator);
+        resetButtonColor();
+        calcMem.clearSelections();
+        calcMem.num1 += calcMem.solution;
+        calcMem.operator = newSelection;
+        clearDisplay();
+        populateDisplay(calcMem.roundSolution());
+        changeButtonColor(newSelection);
+    }
+}
+
+function storeNumber(newSelection) {
+    if (calcMem.solution === '') {
+        if (calcMem.operator === '') {
+            if (newSelection === '.' && calcMem.num1.search(/\./) >= 0) {
+                return;
+            }
+            calcMem.num1 += newSelection;
+        } else {
+            if (newSelection === '.' && calcMem.num2.search(/\./) >= 0) {
+                return;
+            }
+            if (calcMem.num2 === '') {
+                clearDisplay();
+            }
+            calcMem.num2 += newSelection;
+        }
+    } else {
+        if (calcMem.operator === '') {
+            clearDisplay();
+            calcMem.clearSelections();
+            calcMem.solution = '';
+            calcMem.num1 += newSelection;
+        } else {
+            if (newSelection === '.' && calcMem.num2.search(/\./) >= 0) {
+                return;
+            }
+            if (calcMem.num2 === '') {
+                clearDisplay();
+            }
+            calcMem.num2 += newSelection;
+        }
+    }
+    populateDisplay(newSelection);
 }
 
 function parseClearButton(newSelection) {
-    
     if (newSelection === 'AC') {
         clearDisplay();
         resetButtonColor();
-        selected.clearSelections();
-        selected.clearSolution();
-    }
-    else {
-        if (selected.getLastOp()) {
+        calcMem.clearSelections();
+        calcMem.solution = '';
+    } else {
+        if (calcMem.operatorWasLast()) {
             resetButtonColor();
         }
         else {
             clearLastEntry();
         }
-        selected.clearEntry();
+        calcMem.clearEntry();
     }
     toggleClearButton();
-    return;
-}
-
-function storeNumber(newSelection) {
-
-    if (selected.solution === '') {
-        if (selected.operator === '') {
-            if (newSelection === '.' && selected.num1.search(/\./) >= 0) {
-                return;
-            }
-            selected.num1Cat(newSelection);
-        }
-        else {
-            if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
-                return;
-            }
-            if (selected.num2 === '') {
-                clearDisplay();
-            }
-            selected.num2Cat(newSelection);
-        }
-    }
-    else {
-        if (selected.operator === '') {
-            clearDisplay();
-            selected.clearSelections();
-            selected.clearSolution();
-            selected.num1Cat(newSelection);
-        }
-        else {
-            if (newSelection === '.' && selected.num2.search(/\./) >= 0) {
-                return;
-            }
-            if (selected.num2 === '') {
-                clearDisplay();
-            }
-            selected.num2Cat(newSelection);
-        }
-    }
-    populateDisplay(newSelection);
-    return;
-}
-
-function storeOperator(newSelection) {
-    if (newSelection === '-' && selected.num1 === '') {
-        selected.num1Cat(newSelection);
-        populateDisplay(newSelection);
-    }
-    else if (newSelection === '-' && selected.operator !== '' && selected.num2 === '') {
-        selected.num2Cat(newSelection);
-        clearDisplay();
-        populateDisplay(newSelection);
-    }
-    else if (selected.num1 !== '' && selected.num1 !== '-' && selected.operator === '') {
-        selected.changeOperator(newSelection);
-        changeButtonColor(newSelection);
-    }
-    else if (selected.isReady()) {
-        selected.convertSelections();
-        selected.solution = operate(selected.num1, selected.num2, selected.operator);
-        resetButtonColor();
-        selected.clearSelections();
-        selected.num1Cat(selected.solution);
-        selected.changeOperator(newSelection);
-        clearDisplay();
-        populateDisplay(selected.roundSolution());
-        changeButtonColor(newSelection);
-    }
-    return;
-}
-
-function parseEquals() {
-    if (selected.isReady()) {
-        selected.convertSelections();
-        selected.solution = operate(selected.num1, selected.num2, selected.operator);
-        resetButtonColor();
-        selected.clearSelections();
-        selected.num1Cat(selected.solution);
-        clearDisplay();
-        populateDisplay(selected.roundSolution());
-    }
-    return;
 }
 
 function parseSelection(newSelection) {
-    
     const operators = ['+','-','x','/'];
     const numbers = ['.','0','1','2','3','4','5','6','7','8','9'];
     const clearButtons = ['AC','CE'];
     
     if (clearButtons.includes(newSelection) || newSelection === 'Backspace') {
         parseClearButton(whichClear());
-    }
-    else if (numbers.includes(newSelection)) {
+    } else if (numbers.includes(newSelection)) {
         storeNumber(newSelection);
-    }
-    else if (operators.includes(newSelection)) {
+    } else if (operators.includes(newSelection)) {
         storeOperator(newSelection);
-    }
-    else if (newSelection === '=' || newSelection === 'Enter') {
+    } else if (newSelection === '=' || newSelection === 'Enter') {
         parseEquals(newSelection);
     }
     toggleClearButton();
-    return;
-}
-
-function whichClear() {
-
-    if (selected.operator !== '') {
-        return 'CE'
-    }
-    else {
-        return 'AC';
-    }
-}
-
-var selected = {
-    num1: '',
-    num2: '',
-    operator: '',
-    solution: '',
-    num1Cat(selection) {
-        this.num1 += selection;
-    },
-    changeOperator(selection) {
-        this.operator = selection;
-    },
-    num2Cat(selection) {
-        this.num2 += selection;
-    },
-    clearSelections() {
-        this.num1 = '';
-        this.num2 = '';
-        this.operator = '';
-    },
-    convertSelections() {
-        this.num1 = parseFloat(this.num1);
-        this.num2 = parseFloat(this.num2);
-    },
-    clearSolution() {
-        this.solution = '';
-    },
-    clearEntry() {
-        if (this.num2 != '') {
-            this.num2 = this.num2.substring(0, this.num2.length - 1);
-        }
-        else if (this.operator != '') {
-            this.operator = '';
-        }  
-        else if (this.num1 != '') {
-            this.num1 = this.num1.substring(0, this.num1.length - 1);
-        }
-    },
-    isReady() {
-        return this.num1 !== '' && this.num1 !== '-' && this.num2 !== '' && this.num2 !== '-' && this.operator !== '';
-    },
-    roundSolution() {
-        if (this.solution.toString().length > 14) {
-            this.solution = parseFloat(this.solution).toPrecision(10);
-        }
-        return this.solution;
-    },
-    getLastOp() {
-        if (this.num2 != '') {
-            return;
-        }
-        else if (this.operator != '') {
-            return this.operator;
-        }
-        else if (this.num1 != '') {
-            return;
-        }
-    }
 }
 
 const buttons = document.querySelectorAll('button');
@@ -326,6 +254,7 @@ const buttons = document.querySelectorAll('button');
 buttons.forEach(button => button.addEventListener('click', () => {
     parseSelection(button.textContent);
 }));
+
 document.addEventListener('keydown', function(e){
     const key = document.querySelector(`button[key="${e.key}"]`);
     
