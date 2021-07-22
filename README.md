@@ -1,5 +1,8 @@
 About:
-This was my fifth and final project of the Foundations portion of The Odin Project. The assignment was to put together all the HTML, CSS and JavaScript skills I had learned from Foundations and create an on-screen calculator web app.
+This was my fifth and final project of the Foundations portion of The Odin Project.
+
+Assignment:
+Put together all the HTML, CSS and JavaScript skills I learned from Foundations and create an on-screen calculator web app
 
 Objectives:
 -create functions for basic math operators
